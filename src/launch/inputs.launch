@@ -1,6 +1,9 @@
 <launch>
 
   <!-- CLI node -->
-  <node pkg="tuber_selection" name="cli" type="cli.py" output="screen"></node>
+  <node pkg="tuber_selection" name="cli_node" type="cli.py" output="screen"></node>
+  
+  <!-- Camera node -->
+  <node pkg="tuber_selection" name="camera_node" type="camera.py" output="screen"></node>
 
 </launch>

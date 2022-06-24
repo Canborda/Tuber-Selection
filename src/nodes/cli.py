@@ -32,9 +32,12 @@ def updateOption(key):
     if key == Key.up: CURRENT_OPTION = CURRENT_OPTION - 1 if CURRENT_OPTION > 1 else len(OPTIONS)
 
 def publishMessage():
+    # Declare and fill message
+    msg = Int8()
+    msg.data = CURRENT_OPTION
     # Create publisher and publish current option
     pub = rospy.Publisher('/menu_topic', Int8, queue_size=0)
-    pub.publish(CURRENT_OPTION)
+    pub.publish(msg)
 
 def keyPressed(key):
     # Seek events
