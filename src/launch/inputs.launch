@@ -1,0 +1,6 @@
+<launch>
+
+  <!-- CLI node -->
+  <node pkg="tuber_selection" name="cli" type="cli.py" output="screen"></node>
+
+</launch>
