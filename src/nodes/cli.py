@@ -41,7 +41,7 @@ def publishMessage():
 
 def keyPressed(key):
     # Seek events
-    if key == Key.esc: sys.exit()
+    if key == Key.enter and CURRENT_OPTION == 3: sys.exit()
     if key == Key.enter: publishMessage()
     # Run events
     updateOption(key)
@@ -52,7 +52,7 @@ def keyReleased(key):
 
 if __name__ == '__main__':
     # Run node
-    node_name = 'cli'
+    node_name = 'cli_node'
     rospy.init_node(node_name)
     rospy.loginfo(f'>> STATUS: Node \"{node_name}\" initialized.')
     rospy.sleep(1)
@@ -61,5 +61,9 @@ if __name__ == '__main__':
     # Print first screen
     updateScreen()
     # Start listener
-    with Listener(on_press=keyPressed, on_release=keyReleased) as listener:
-        listener.join()
+    try:
+        with Listener(on_press=keyPressed, on_release=keyReleased) as listener:
+            listener.join()
+
+    except:
+        rospy.logwarn('Program finished...')
