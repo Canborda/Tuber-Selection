@@ -1,0 +1,8 @@
+img_size: 250
+flip: false
+blur: 22
+hue_min: 153
+hue_max: 22
+bb_margin: 25
+upper_limit: 0.4
+lower_limit: 0.6
