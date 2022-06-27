@@ -6,6 +6,7 @@ from std_msgs.msg import Int8MultiArray
 
 from models.menus.enums import *
 from models.menus.submenu import Submenu
+from models.menus.params import BoolParam, FloatParam, IntegerParam, EnumParam
 
 from pynput.keyboard import Key, Listener
 
@@ -22,25 +23,25 @@ class Cli:
         # Calibration menu
         menu.attachSubmenu(MainMenu.Calibration, Submenu('Calibration Options', CalibrationMenu))
         menu.getSubmenu(MainMenu.Calibration) \
-            .attachParam(CalibrationMenu.Flip, 'flip') \
-            .attachParam(CalibrationMenu.Blur, 'blur') \
+            .attachParam(BoolParam(CalibrationMenu.Flip, '/calibration/flip')) \
+            .attachParam(IntegerParam(CalibrationMenu.Blur, '/calibration/blur', min=3, max=50, step=2)) \
             .attachSubmenu(CalibrationMenu.Hue, Submenu('Hue Limits', HueMenu)) \
             .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu)) \
-            .attachParam(CalibrationMenu.Bounding_box_margin, 'bb_margin')
+            .attachParam(IntegerParam(CalibrationMenu.Bounding_box_margin, '/calibration/bb_margin', min=0, max=50, step=5))
         menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Hue) \
-            .attachParam(HueMenu.Min, 'hue_min') \
-            .attachParam(HueMenu.Max, 'hue_max')
+            .attachParam(IntegerParam(HueMenu.Min, '/calibration/hue/min', min=0, max=179, step=1)) \
+            .attachParam(IntegerParam(HueMenu.Max, '/calibration/hue/max', min=0, max=179, step=1))
         menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Region) \
-            .attachParam(RegionMenu.Center, 'region_center') \
-            .attachParam(RegionMenu.Size, 'region_size')
+            .attachParam(FloatParam(RegionMenu.Center, '/calibration/region/center', min=0.4, max=0.6, step=0.01)) \
+            .attachParam(FloatParam(RegionMenu.Size, '/calibration/region/size', min=0.1, max=0.5, step=0.01))
         # Classification menu
         menu.attachSubmenu(MainMenu.Classification, Submenu('Classification Options', ClassificationMenu))
         menu.getSubmenu(MainMenu.Classification) \
-            .attachSubmenu(ClassificationMenu.Set_network, Submenu('Convolutional Neural Network Options', SetNetworkMenu))
+            .attachParam(EnumParam(ClassificationMenu.Set_network, '/classification/network', enum=NetworkType))
         # Settings menu
         menu.attachSubmenu(MainMenu.Settings, Submenu('Global Settings', SettingsMenu))
         menu.getSubmenu(MainMenu.Settings) \
-            .attachParam(SettingsMenu.Image_size, 'img_size')
+            .attachParam(IntegerParam(SettingsMenu.Image_size, '/classification/img_size', min=150, max=300, step=5))
         # Return built menu
         return menu
 
