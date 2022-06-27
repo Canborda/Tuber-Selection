@@ -1,5 +1,5 @@
 img_size: 250
-flip: false
+flip: true
 blur: 22
 hue_min: 153
 hue_max: 22

@@ -53,22 +53,14 @@ class Cli:
     def keyPressed(self, key):
         # Seek events
         if key == Key.esc: sys.exit()
-        elif key == Key.enter:
-            self.mainMenu.getActiveMenu().enterSubmenu()
-            self.publishMessage()
-        elif key == Key.backspace:
-            self.mainMenu.getActiveMenu().exitSubmenu()
-            self.publishMessage()
-        elif key == Key.up:
-            self.mainMenu.getActiveMenu().decrease()
-        elif key == Key.down:
-            self.mainMenu.getActiveMenu().increase()
-        elif key == Key.left:
-            # TODO add decrease param value
-            self.publishMessage()
-        elif key == Key.right:
-            # TODO add increase param value
-            self.publishMessage()
+        elif key == Key.enter: self.mainMenu.getActiveMenu().enterSubmenu()
+        elif key == Key.backspace: self.mainMenu.getActiveMenu().exitSubmenu()
+        elif key == Key.up: self.mainMenu.getActiveMenu().decrease()
+        elif key == Key.down: self.mainMenu.getActiveMenu().increase()
+        elif key == Key.left: pass # TODO add decrease param value
+        elif key == Key.right: pass # TODO add increase param value
+        # Publish menu path message
+        self.publishMessage()
         # Show pressed key
         self.mainMenu.getActiveMenu().show(f"{str(key)} pressed")
 
