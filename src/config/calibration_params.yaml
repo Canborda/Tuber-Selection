@@ -4,5 +4,5 @@ blur: 22
 hue_min: 153
 hue_max: 22
 bb_margin: 25
-upper_limit: 0.4
-lower_limit: 0.6
+region_center: 0.5
+region_size: 0.3

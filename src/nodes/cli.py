@@ -1,54 +1,80 @@
 #!/usr/bin/env python3
 
+import sys
 import rospy
-from std_msgs.msg import Int8
+from std_msgs.msg import Int8MultiArray
 
-import os, sys
-from py_console import console, bgColor, textColor
+from models.menus.enums import *
+from models.menus.submenu import Submenu
+
 from pynput.keyboard import Key, Listener
 
-CURRENT_OPTION = 1
-OPTIONS = ['1 - Calibration', '2 - Classification', '3 - Exit']
 
-def updateScreen(key=None):
-    # Restart screen
-    os.system('clear')
-    # Show start message
-    console.log('-'*65)
-    console.log(f" Press {console.highlight('UP')} and {console.highlight('DOWN')} arrows to move between modes")
-    console.log(f" Press {console.highlight('ENTER')} to select mode")
-    console.log('-'*65)
-    console.warn(f"Pressed key: {key}" if key else "Press a key!")
-    console.log('-'*65)
-    # Highlight selected option
-    for option in OPTIONS:
-        bg = bgColor.GREEN if int(option[0]) == CURRENT_OPTION else ''
-        console.log(console.highlight(option, bgColor=bg, textColor=textColor.WHITE))
-    console.log('-'*65)
+class Cli:
 
-def updateOption(key):
-    global CURRENT_OPTION
-    if key == Key.down: CURRENT_OPTION = CURRENT_OPTION + 1 if CURRENT_OPTION < len(OPTIONS) else 1
-    if key == Key.up: CURRENT_OPTION = CURRENT_OPTION - 1 if CURRENT_OPTION > 1 else len(OPTIONS)
+    def __init__(self):
+        self.mainMenu = self.__buildMenu()
+        self.publisher = rospy.Publisher('/menu_topic', Int8MultiArray, queue_size=0)
 
-def publishMessage():
-    # Declare and fill message
-    msg = Int8()
-    msg.data = CURRENT_OPTION
-    # Create publisher and publish current option
-    pub = rospy.Publisher('/menu_topic', Int8, queue_size=0)
-    pub.publish(msg)
+    def __buildMenu(self):
+        # Main menu
+        menu = Submenu('MAIN MENU', MainMenu)
+        # Calibration menu
+        menu.attachSubmenu(MainMenu.Calibration, Submenu('Calibration Options', CalibrationMenu))
+        menu.getSubmenu(MainMenu.Calibration) \
+            .attachParam(CalibrationMenu.Flip, 'flip') \
+            .attachParam(CalibrationMenu.Blur, 'blur') \
+            .attachSubmenu(CalibrationMenu.Hue, Submenu('Hue Limits', HueMenu)) \
+            .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu)) \
+            .attachParam(CalibrationMenu.Bounding_box_margin, 'bb_margin')
+        menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Hue) \
+            .attachParam(HueMenu.Min, 'hue_min') \
+            .attachParam(HueMenu.Max, 'hue_max')
+        menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Region) \
+            .attachParam(RegionMenu.Center, 'region_center') \
+            .attachParam(RegionMenu.Size, 'region_size')
+        # Classification menu
+        menu.attachSubmenu(MainMenu.Classification, Submenu('Classification Options', ClassificationMenu))
+        menu.getSubmenu(MainMenu.Classification) \
+            .attachSubmenu(ClassificationMenu.Set_network, Submenu('Convolutional Neural Network Options', SetNetworkMenu))
+        # Settings menu
+        menu.attachSubmenu(MainMenu.Settings, Submenu('Global Settings', SettingsMenu))
+        menu.getSubmenu(MainMenu.Settings) \
+            .attachParam(SettingsMenu.Image_size, 'img_size')
+        # Return built menu
+        return menu
 
-def keyPressed(key):
-    # Seek events
-    if key == Key.enter and CURRENT_OPTION == 3: sys.exit()
-    if key == Key.enter: publishMessage()
-    # Run events
-    updateOption(key)
-    updateScreen(key)
+    def publishMessage(self):
+        msg = Int8MultiArray()
+        msg.data = list(map(lambda x: x[1].value, self.mainMenu.getActiveMenu().getPath()))
+        msg.data.append(self.mainMenu.getActiveMenu().getCurrent().value)
+        self.publisher.publish(msg)
 
-def keyReleased(key):
-    pass
+    def keyPressed(self, key):
+        # Seek events
+        if key == Key.esc: sys.exit()
+        elif key == Key.enter:
+            self.mainMenu.getActiveMenu().enterSubmenu()
+            self.publishMessage()
+        elif key == Key.backspace:
+            self.mainMenu.getActiveMenu().exitSubmenu()
+            self.publishMessage()
+        elif key == Key.up:
+            self.mainMenu.getActiveMenu().decrease()
+        elif key == Key.down:
+            self.mainMenu.getActiveMenu().increase()
+        elif key == Key.left:
+            # TODO add decrease param value
+            self.publishMessage()
+        elif key == Key.right:
+            # TODO add increase param value
+            self.publishMessage()
+        # Show pressed key
+        self.mainMenu.getActiveMenu().show(f"{str(key)} pressed")
+
+    def keyReleased(self, key):
+        pass
+
 
 if __name__ == '__main__':
     # Run node
@@ -56,14 +82,13 @@ if __name__ == '__main__':
     rospy.init_node(node_name)
     rospy.loginfo(f'>> STATUS: Node \"{node_name}\" initialized.')
     rospy.sleep(1)
-    # Disable timestamp for logger
-    console.setShowTimeDefault(False)
-    # Print first screen
-    updateScreen()
     # Start listener
+    cli = Cli()
+    cli.mainMenu.show()
+    #FIXME clear terminal memory when exit program
     try:
-        with Listener(on_press=keyPressed, on_release=keyReleased) as listener:
+        with Listener(on_press=cli.keyPressed, on_release=cli.keyReleased) as listener:
             listener.join()
-
-    except:
+    except Exception as e:
         rospy.logwarn('Program finished...')
+        rospy.logerr(e)
