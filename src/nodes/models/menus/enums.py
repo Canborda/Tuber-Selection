@@ -49,8 +49,9 @@ class RegionMenu(Enum):
     Size = auto()
 
 
-class SetNetworkMenu(Enum):
-    Binary = auto()
-    Multiclass = auto()
+class NetworkType(Enum):
+    Binary_CNN = auto()
+    Multiclass_CNN = auto()
+    Autoencoder = auto()
 
 # endregion
