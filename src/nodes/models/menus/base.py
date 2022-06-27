@@ -64,9 +64,8 @@ class BaseMenu:
         # Highlight selected option
         for option in self.__options:
             bg = bgColor.GREEN if self.__current == option.value else ''
-            line = '  ' + str(option.value) + ' - ' + option.name
-            console.log(console.highlight(
-                line, bgColor=bg, textColor=textColor.WHITE))
+            line = '  ' + str(option.value) + ' - ' + option.name + '  '
+            console.log(console.highlight(line, bgColor=bg, textColor=textColor.WHITE))
         console.log('-'*W)
         # Display info message (if exists)
         console.info(' > INFO: ' + infoMsg if infoMsg else '')
