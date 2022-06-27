@@ -8,7 +8,6 @@ calibration:
   region:
     center: 0.5
     size: 0.3
-
 classification:
   img_size: 250
   network: 1

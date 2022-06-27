@@ -38,7 +38,7 @@ class Calibration:
             # Convert image message
             frame = self.bridge.imgmsg_to_cv2(img_msg, 'bgr8')
             # TODO Add image preprocessing
-            if rospy.get_param('/calibration/flip'): frame = cv.flip(frame, -1)
+            if rospy.get_param('/img/calibration/flip'): frame = cv.flip(frame, -1)
             # Add calibration title
             text = 'C A L I B R A T I N G . . .'
             textsize = cv.getTextSize(text, cv.FONT_HERSHEY_COMPLEX, 2, 4)[0]
@@ -55,7 +55,7 @@ class Calibration:
 
     def calibrateFlip(self, frame):
         # Get loaded param
-        flip = rospy.get_param('/calibration/flip')
+        flip = rospy.get_param('/img/calibration/flip')
         # Draw param info
         text = 'Flip = ' + str(flip)
         textsize = cv.getTextSize(text, cv.FONT_HERSHEY_COMPLEX, 1, 2)[0]

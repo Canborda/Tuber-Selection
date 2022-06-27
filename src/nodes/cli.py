@@ -23,25 +23,25 @@ class Cli:
         # Calibration menu
         menu.attachSubmenu(MainMenu.Calibration, Submenu('Calibration Options', CalibrationMenu))
         menu.getSubmenu(MainMenu.Calibration) \
-            .attachParam(BoolParam(CalibrationMenu.Flip, '/calibration/flip')) \
-            .attachParam(IntegerParam(CalibrationMenu.Blur, '/calibration/blur', min=3, max=50, step=2)) \
+            .attachParam(BoolParam(CalibrationMenu.Flip, '/img/calibration/flip')) \
+            .attachParam(IntegerParam(CalibrationMenu.Blur, '/img/calibration/blur', min=3, max=50, step=2)) \
             .attachSubmenu(CalibrationMenu.Hue, Submenu('Hue Limits', HueMenu)) \
             .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu)) \
-            .attachParam(IntegerParam(CalibrationMenu.Bounding_box_margin, '/calibration/bb_margin', min=0, max=50, step=5))
+            .attachParam(IntegerParam(CalibrationMenu.Bounding_box_margin, '/img/calibration/bb_margin', min=0, max=50, step=5))
         menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Hue) \
-            .attachParam(IntegerParam(HueMenu.Min, '/calibration/hue/min', min=0, max=179, step=1)) \
-            .attachParam(IntegerParam(HueMenu.Max, '/calibration/hue/max', min=0, max=179, step=1))
+            .attachParam(IntegerParam(HueMenu.Min, '/img/calibration/hue/min', min=0, max=179, step=1)) \
+            .attachParam(IntegerParam(HueMenu.Max, '/img/calibration/hue/max', min=0, max=179, step=1))
         menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Region) \
-            .attachParam(FloatParam(RegionMenu.Center, '/calibration/region/center', min=0.4, max=0.6, step=0.01)) \
-            .attachParam(FloatParam(RegionMenu.Size, '/calibration/region/size', min=0.1, max=0.5, step=0.01))
+            .attachParam(FloatParam(RegionMenu.Center, '/img/calibration/region/center', min=0.4, max=0.6, step=0.01)) \
+            .attachParam(FloatParam(RegionMenu.Size, '/img/calibration/region/size', min=0.1, max=0.5, step=0.01))
         # Classification menu
         menu.attachSubmenu(MainMenu.Classification, Submenu('Classification Options', ClassificationMenu))
         menu.getSubmenu(MainMenu.Classification) \
-            .attachParam(EnumParam(ClassificationMenu.Set_network, '/classification/network', enum=NetworkType))
+            .attachParam(EnumParam(ClassificationMenu.Set_network, '/img/classification/network', enum=NetworkType))
         # Settings menu
         menu.attachSubmenu(MainMenu.Settings, Submenu('Global Settings', SettingsMenu))
         menu.getSubmenu(MainMenu.Settings) \
-            .attachParam(IntegerParam(SettingsMenu.Image_size, '/classification/img_size', min=150, max=300, step=5))
+            .attachParam(IntegerParam(SettingsMenu.Image_size, '/img/classification/img_size', min=150, max=300, step=5))
         # Return built menu
         return menu
 
