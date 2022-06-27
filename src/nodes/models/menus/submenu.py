@@ -22,8 +22,7 @@ class Submenu(BaseMenu):
         try:
             return self.__subumenus[option.value]
         except KeyError:
-            msg = f"Option '{self.optionStr(option)}' not a submenu!"
-            self.printError(msg)
+            self.addError(f"Option '{self.optionStr(option)}' not a submenu!")
 
     def attachParam(self, option: Enum, param: str):
         self.__params[option.value] = param
@@ -40,17 +39,18 @@ class Submenu(BaseMenu):
         try:
             self.getSubmenu(self.getCurrent()).setActive(True)
             self.setActive(False)
-            self.getSubmenu(self.getCurrent()
-                            ).__path = self.__path + [self.__subumenus[0]]
+            self.getSubmenu(self.getCurrent()).__path = self.__path + [self.__subumenus[0]]
         except KeyError:
-            msg = f"Option '{self.optionStr(self.getCurrent())}' not a submenu!"
-            self.printError(msg)
+            self.addError(f"Option '{self.optionStr(self.getCurrent())}' not a submenu!")
         except AttributeError:
             pass
 
     def exitSubmenu(self):
-        self.__path.pop().setActive(True)
-        self.setActive(False)
+        if len(self.__path):
+            self.__path.pop().setActive(True)
+            self.setActive(False)
+        else:
+            self.addError("Already on Root Menu")
 
     def getActiveMenu(self):
         if self.isActive():

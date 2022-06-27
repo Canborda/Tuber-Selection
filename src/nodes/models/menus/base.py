@@ -13,17 +13,16 @@ class BaseMenu:
         self.__isActive = isActive
         self.__options = options
         self.__current = 1
+        self.__errorMsg = None
 
     # region Operation methods
 
     def increase(self):
-        self.__current = self.__current + \
-            1 if self.__current < len(self.__options) else 1
+        self.__current = self.__current + 1 if self.__current < len(self.__options) else 1
         return self
 
     def decrease(self):
-        self.__current = self.__current - \
-            1 if self.__current > 1 else len(self.__options)
+        self.__current = self.__current - 1 if self.__current > 1 else len(self.__options)
         return self
 
     def setActive(self, isActive: bool):
@@ -34,7 +33,7 @@ class BaseMenu:
 
     def getCurrent(self) -> Enum:
         return self.__options(self.__current)
-    
+
     # endregion
 
     # region Display methods
@@ -44,11 +43,11 @@ class BaseMenu:
 
     def optionStr(self, option: Enum):
         return str(option.value) + ' - ' + option.name.replace('_', ' ')
-    
-    def printError(self, message):
-        console.error('MENU ERROR: ' + message)
 
-    def show(self):
+    def addError(self, message):
+        self.__errorMsg = message
+
+    def show(self, infoMsg: str = None):
         # Display params
         W = 80
         # Restart screen
@@ -69,5 +68,10 @@ class BaseMenu:
             console.log(console.highlight(
                 line, bgColor=bg, textColor=textColor.WHITE))
         console.log('-'*W)
+        # Display info message (if exists)
+        console.info(' > INFO: ' + infoMsg if infoMsg else '')
+        # Display error message (if exists)
+        console.error(' > MENU ERROR: ' + self.__errorMsg if self.__errorMsg else '')
+        self.__errorMsg = None
 
     # endregion
