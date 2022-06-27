@@ -50,6 +50,7 @@ class BaseMenu:
     def show(self, infoMsg: str = None):
         # Display params
         W = 80
+        V = 15
         # Restart screen
         os.system('clear')
         # Show start message
@@ -61,11 +62,18 @@ class BaseMenu:
         console.log(message)
         console.log('-'*W)
         console.log('\033[1m' + self.__name.center(W) + '\033[0m')
+        console.log('')
         # Highlight selected option
         for option in self.__options:
             bg = bgColor.GREEN if self.__current == option.value else ''
-            line = '  ' + str(option.value) + ' - ' + option.name.replace('_', ' ') + '  '
-            console.log(console.highlight(line, bgColor=bg, textColor=textColor.WHITE))
+            fc = textColor.LIGHTGREEN_EX if self.__current == option.value else textColor.LIGHTBLACK_EX
+            name = '    ' + str(option.value) + ' - ' + option.name.replace('_', ' ') + '    '
+            value = '← ' + str(self.getParam(option).get()).center(V) + ' →' if self.getParam(option) else '↳'
+            value = ' ' * (W//2 - len(name)) + value.replace('_', ' ')
+            console.log(
+                console.highlight(name, bgColor=bg, textColor=textColor.WHITE) +
+                console.highlight(value, bgColor='', textColor=fc)
+                )
         console.log('-'*W)
         # Display info message (if exists)
         console.info(' > INFO: ' + infoMsg if infoMsg else '')

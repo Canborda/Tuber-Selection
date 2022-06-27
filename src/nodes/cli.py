@@ -52,14 +52,23 @@ class Cli:
         self.publisher.publish(msg)
 
     def keyPressed(self, key):
+        # Get objects
+        menu = self.mainMenu.getActiveMenu()
+        param = menu.getCurrentParam()
         # Seek events
         if key == Key.esc: sys.exit()
-        elif key == Key.enter: self.mainMenu.getActiveMenu().enterSubmenu()
-        elif key == Key.backspace: self.mainMenu.getActiveMenu().exitSubmenu()
-        elif key == Key.up: self.mainMenu.getActiveMenu().decrease()
-        elif key == Key.down: self.mainMenu.getActiveMenu().increase()
-        elif key == Key.left: pass # TODO add decrease param value
-        elif key == Key.right: pass # TODO add increase param value
+        elif key == Key.enter:
+            menu.enterSubmenu()
+        elif key == Key.backspace:
+            menu.exitSubmenu()
+        elif key == Key.up:
+            menu.decrease()
+        elif key == Key.down:
+            menu.increase()
+        elif key == Key.left:
+            if param: param.decrease()
+        elif key == Key.right:
+            if param: param.increase()
         # Publish menu path message
         self.publishMessage()
         # Show pressed key

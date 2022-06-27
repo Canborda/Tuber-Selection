@@ -118,4 +118,4 @@ class EnumParam(BaseParam):
         return self
 
     def get(self):
-        return self.__enum(self.__value)
+        return self.__enum(self.__value).name

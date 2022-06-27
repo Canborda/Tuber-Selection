@@ -30,7 +30,10 @@ class Submenu(BaseMenu):
         return self
 
     def getParam(self, option: Enum) -> BaseParam:
-        return self.__params[option.value]
+        try:
+            return self.__params[option.value]
+        except KeyError:
+            pass
 
     # endregion
 
@@ -60,7 +63,10 @@ class Submenu(BaseMenu):
             return self.__subumenus[self.getCurrent().value].getActiveMenu()
     
     def getCurrentParam(self) -> BaseParam:
-        return self.__params[self.getCurrent().value]
+        try:
+            return self.__params[self.getCurrent().value]
+        except KeyError:
+            pass
 
     # endregion
 
