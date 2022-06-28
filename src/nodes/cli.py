@@ -24,9 +24,10 @@ class Cli:
         menu.attachSubmenu(MainMenu.Calibration, Submenu('Calibration Options', CalibrationMenu))
         menu.getSubmenu(MainMenu.Calibration) \
             .attachParam(BoolParam(CalibrationMenu.Flip, '/img/calibration/flip')) \
-            .attachParam(IntegerParam(CalibrationMenu.Blur, '/img/calibration/blur', min=3, max=50, step=2)) \
+            .attachParam(IntegerParam(CalibrationMenu.Blur, '/img/calibration/blur', min=2, max=50, step=1)) \
             .attachSubmenu(CalibrationMenu.Hue, Submenu('Hue Limits', HueMenu)) \
-            .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu))
+            .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu)) \
+            .attachParam(IntegerParam(CalibrationMenu.Min_pixels_contour, '/img/calibration/pixels', min=2, max=300, step=2))
         menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Hue) \
             .attachParam(IntegerParam(HueMenu.Min, '/img/calibration/hue/min', min=0, max=179, step=1)) \
             .attachParam(IntegerParam(HueMenu.Max, '/img/calibration/hue/max', min=0, max=179, step=1))
