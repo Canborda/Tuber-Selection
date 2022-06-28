@@ -84,10 +84,13 @@ class Preprocess:
         for cont in contours:
             bbox = cv.boundingRect(cont)
             (x, y, w, h) = bbox
+            pt1 = [x - margin, y - margin]
+            pt2 = [x + w + margin, y + h + margin]
             if w > min_points and h > min_points:
                 if x - margin > 0 and x + w + margin < th_img.shape[1]:
                     filtered_boxes.append(bbox)
                     cv.drawContours(contours_img, [cont], 0, (0,0,255), 2)
+                    cv.rectangle(contours_img, pt1, pt2, (0,0,0), 2)
         # Build contours mask
         cv.putText(contours_img, f'Objects: {len(filtered_boxes)}', (src.shape[1]-100, src.shape[0]-10), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255), 1)
         # Return modified image

@@ -114,7 +114,7 @@ class Calibration:
         # Draw region lines
         h = int(frame.shape[0] * region_center)
         s = int(frame.shape[0] * region_size/2)
-        cv.line(frame, (0,h), (frame.shape[1], h), (0,0,255), 2, cv.LINE_4)
+        cv.line(frame, (0,h), (frame.shape[1], h), (150,150,150), 2, cv.LINE_4)
         cv.line(frame, (0,h-s), (frame.shape[1], h-s), (0,255,0), 2, cv.LINE_4)
         cv.line(frame, (0,h+s), (frame.shape[1], h+s), (0,255,0), 2, cv.LINE_4)
         # Draw params info

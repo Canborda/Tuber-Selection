@@ -9,24 +9,33 @@ import cv2 as cv
 import numpy as np
 import tensorflow as tf
 
+from models.menus.enums import MainMenu
 from models.cnn.network import loadModel
 
 
 class Classification:
 
     def __init__(self):
+        self.SELECTED = False
+        self.prev_path = None
         self.current_img = np.zeros((480,640, 3), dtype=np.uint8)
         # TensorFlow attributes
         self.model = loadModel()
         # OpenCV attributes
         self.bridge = CvBridge()
         # ROS attributes
+        self.menu_sub = rospy.Subscriber('/menu_topic', Int8MultiArray, self.menuCallback)
         self.camera_sub = rospy.Subscriber('/preprocess/flipped', Image, self.cameraCallback)
         self.bboxes_sub = rospy.Subscriber('/preprocess/bboxes', Int32MultiArray, self.bboxesCallback)
         self.predictions_pub = rospy.Publisher('/classification/predictions', Image, queue_size=0)
-        self.crop_pub = rospy.Publisher('/classification/cropped', Image, queue_size=0)
+        self.visualizer_pub = rospy.Publisher('/visualizer_topic', Image, queue_size=0)
+        self.crop_pub = rospy.Publisher('/classification/cropped', Image, queue_size=0) # Temporary topic
 
     # region Callback methods
+
+    def menuCallback(self, list_msg: Int8MultiArray):
+        self.SELECTED = list_msg.data[0] == MainMenu.Start.value and list_msg.data == self.prev_path
+        self.prev_path = list_msg.data
 
     def cameraCallback(self, img_msg: Image):
         self.current_img = self.bridge.imgmsg_to_cv2(img_msg, 'bgr8')
@@ -39,6 +48,8 @@ class Classification:
         # Publish image
         img_msg = self.bridge.cv2_to_imgmsg(image, 'bgr8')
         self.predictions_pub.publish(img_msg)
+        if self.SELECTED:
+            self.visualizer_pub.publish(img_msg)
 
     # endregion
 
