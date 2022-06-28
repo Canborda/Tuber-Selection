@@ -52,3 +52,6 @@ CATKIN_IGNORE
 
 .vscode
 __pycache__/
+
+# CNN weights
+checkpoints/

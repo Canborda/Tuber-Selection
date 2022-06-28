@@ -39,7 +39,7 @@ class Cli:
         menu.getSubmenu(MainMenu.Classification) \
             .attachParam(EnumParam(ClassificationMenu.Set_network, '/img/classification/network', enum=NetworkType)) \
             .attachParam(IntegerParam(ClassificationMenu.Image_size, '/img/classification/img_size', min=150, max=300, step=10)) \
-            .attachParam(IntegerParam(ClassificationMenu.Bounding_box_margin, '/img/classification/bb_margin', min=0, max=50, step=5))
+            .attachParam(IntegerParam(ClassificationMenu.Bounding_box_margin, '/img/classification/bb_margin', min=0, max=100, step=2))
         # Settings menu
         menu.attachSubmenu(MainMenu.Settings, Submenu('Global Settings', SettingsMenu))
         # Return built menu
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     node_name = 'cli_node'
     rospy.init_node(node_name)
     rospy.loginfo(f'>> STATUS: Node \"{node_name}\" initialized.')
-    rospy.sleep(1)
+    rospy.sleep(5)
     # Start listener
     cli = Cli()
     cli.mainMenu.show()
