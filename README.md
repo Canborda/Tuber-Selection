@@ -8,3 +8,4 @@ http://wiki.ros.org/cv_camera
 ## Libraries:
 - [Pyinput](https://pynput.readthedocs.io/en/latest/keyboard.html#monitoring-the-keyboard): monitor keyboard
 - [Py_console](https://pypi.org/project/py-console/): stilize console (colors)
+- [OpenCV](https://pypi.org/project/opencv-python/): Computer Vision for python
