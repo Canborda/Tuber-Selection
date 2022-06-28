@@ -64,12 +64,12 @@ class IntegerParam(BaseParam):
         self.__step: int = kwargs['step']
 
     def increase(self):
-        self.__value = self.__value + self.__step if self.__value < self.__max else self.__max
+        self.__value = self.__value + self.__step if self.__value < self.__max else self.__min
         self.setROSParam(self.__value)
         return self
 
     def decrease(self):
-        self.__value = self.__value - self.__step if self.__value > self.__min else self.__min
+        self.__value = self.__value - self.__step if self.__value > self.__min else self.__max
         self.setROSParam(self.__value)
         return self
 

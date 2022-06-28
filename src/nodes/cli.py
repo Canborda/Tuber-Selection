@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-import sys
 import rospy
 from std_msgs.msg import Int8MultiArray
+
+import sys
+from pynput.keyboard import Key, Listener
 
 from models.menus.enums import *
 from models.menus.submenu import Submenu
 from models.menus.params import BoolParam, FloatParam, IntegerParam, EnumParam
-
-from pynput.keyboard import Key, Listener
 
 
 class Cli:
@@ -26,8 +26,7 @@ class Cli:
             .attachParam(BoolParam(CalibrationMenu.Flip, '/img/calibration/flip')) \
             .attachParam(IntegerParam(CalibrationMenu.Blur, '/img/calibration/blur', min=3, max=50, step=2)) \
             .attachSubmenu(CalibrationMenu.Hue, Submenu('Hue Limits', HueMenu)) \
-            .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu)) \
-            .attachParam(IntegerParam(CalibrationMenu.Bounding_box_margin, '/img/calibration/bb_margin', min=0, max=50, step=5))
+            .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu))
         menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Hue) \
             .attachParam(IntegerParam(HueMenu.Min, '/img/calibration/hue/min', min=0, max=179, step=1)) \
             .attachParam(IntegerParam(HueMenu.Max, '/img/calibration/hue/max', min=0, max=179, step=1))
@@ -37,11 +36,11 @@ class Cli:
         # Classification menu
         menu.attachSubmenu(MainMenu.Classification, Submenu('Classification Options', ClassificationMenu))
         menu.getSubmenu(MainMenu.Classification) \
-            .attachParam(EnumParam(ClassificationMenu.Set_network, '/img/classification/network', enum=NetworkType))
+            .attachParam(EnumParam(ClassificationMenu.Set_network, '/img/classification/network', enum=NetworkType)) \
+            .attachParam(IntegerParam(ClassificationMenu.Image_size, '/img/classification/img_size', min=150, max=300, step=10)) \
+            .attachParam(IntegerParam(ClassificationMenu.Bounding_box_margin, '/img/classification/bb_margin', min=0, max=50, step=5))
         # Settings menu
         menu.attachSubmenu(MainMenu.Settings, Submenu('Global Settings', SettingsMenu))
-        menu.getSubmenu(MainMenu.Settings) \
-            .attachParam(IntegerParam(SettingsMenu.Image_size, '/img/classification/img_size', min=150, max=300, step=5))
         # Return built menu
         return menu
 

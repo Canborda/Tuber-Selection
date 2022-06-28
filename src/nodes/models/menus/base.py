@@ -49,7 +49,7 @@ class BaseMenu:
 
     def show(self, infoMsg: str = None):
         # Display params
-        W = 80
+        W = 70
         V = 15
         # Restart screen
         os.system('clear')
