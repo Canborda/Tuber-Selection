@@ -21,10 +21,11 @@
   <!-- Preprocess node -->
   <node pkg="tuber-selection" name="preprocess_node" type="preprocess.py" output="screen"></node>
 
+  <!-- Classification node -->
+  <node pkg="tuber-selection" name="classification_node" type="classification.py" output="screen"></node>
+
   <!-- Calibration node -->
   <node pkg="tuber-selection" name="calibration_node" type="calibration.py" output="screen"></node>
-
-  <!-- TODO Add classification node -->
 
   <!-- Storage params node -->
   <node pkg="tuber-selection" name="storage_node" type="storage.py" output="screen"></node>

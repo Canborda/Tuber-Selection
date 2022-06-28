@@ -9,3 +9,4 @@ http://wiki.ros.org/cv_camera
 - [Pyinput](https://pynput.readthedocs.io/en/latest/keyboard.html#monitoring-the-keyboard): monitor keyboard
 - [Py_console](https://pypi.org/project/py-console/): stilize console (colors)
 - [OpenCV](https://pypi.org/project/opencv-python/): Computer Vision for python
+- [TensorFlow - Keras](https://www.tensorflow.org/api_docs/python/tf/keras): Convolutional Neural Networks
