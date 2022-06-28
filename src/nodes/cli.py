@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-import sys
 import rospy
 from std_msgs.msg import Int8MultiArray
 
+import sys
+from pynput.keyboard import Key, Listener
+
 from models.menus.enums import *
 from models.menus.submenu import Submenu
-
-from pynput.keyboard import Key, Listener
+from models.menus.params import BoolParam, FloatParam, IntegerParam, EnumParam
 
 
 class Cli:
@@ -22,25 +23,24 @@ class Cli:
         # Calibration menu
         menu.attachSubmenu(MainMenu.Calibration, Submenu('Calibration Options', CalibrationMenu))
         menu.getSubmenu(MainMenu.Calibration) \
-            .attachParam(CalibrationMenu.Flip, 'flip') \
-            .attachParam(CalibrationMenu.Blur, 'blur') \
+            .attachParam(BoolParam(CalibrationMenu.Flip, '/img/calibration/flip')) \
+            .attachParam(IntegerParam(CalibrationMenu.Blur, '/img/calibration/blur', min=3, max=50, step=2)) \
             .attachSubmenu(CalibrationMenu.Hue, Submenu('Hue Limits', HueMenu)) \
-            .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu)) \
-            .attachParam(CalibrationMenu.Bounding_box_margin, 'bb_margin')
+            .attachSubmenu(CalibrationMenu.Region, Submenu('Centroid Region Limits', RegionMenu))
         menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Hue) \
-            .attachParam(HueMenu.Min, 'hue_min') \
-            .attachParam(HueMenu.Max, 'hue_max')
+            .attachParam(IntegerParam(HueMenu.Min, '/img/calibration/hue/min', min=0, max=179, step=1)) \
+            .attachParam(IntegerParam(HueMenu.Max, '/img/calibration/hue/max', min=0, max=179, step=1))
         menu.getSubmenu(MainMenu.Calibration).getSubmenu(CalibrationMenu.Region) \
-            .attachParam(RegionMenu.Center, 'region_center') \
-            .attachParam(RegionMenu.Size, 'region_size')
+            .attachParam(FloatParam(RegionMenu.Center, '/img/calibration/region/center', min=0.4, max=0.6, step=0.01)) \
+            .attachParam(FloatParam(RegionMenu.Size, '/img/calibration/region/size', min=0.1, max=0.5, step=0.01))
         # Classification menu
         menu.attachSubmenu(MainMenu.Classification, Submenu('Classification Options', ClassificationMenu))
         menu.getSubmenu(MainMenu.Classification) \
-            .attachSubmenu(ClassificationMenu.Set_network, Submenu('Convolutional Neural Network Options', SetNetworkMenu))
+            .attachParam(EnumParam(ClassificationMenu.Set_network, '/img/classification/network', enum=NetworkType)) \
+            .attachParam(IntegerParam(ClassificationMenu.Image_size, '/img/classification/img_size', min=150, max=300, step=10)) \
+            .attachParam(IntegerParam(ClassificationMenu.Bounding_box_margin, '/img/classification/bb_margin', min=0, max=50, step=5))
         # Settings menu
         menu.attachSubmenu(MainMenu.Settings, Submenu('Global Settings', SettingsMenu))
-        menu.getSubmenu(MainMenu.Settings) \
-            .attachParam(SettingsMenu.Image_size, 'img_size')
         # Return built menu
         return menu
 
@@ -51,14 +51,23 @@ class Cli:
         self.publisher.publish(msg)
 
     def keyPressed(self, key):
+        # Get objects
+        menu = self.mainMenu.getActiveMenu()
+        param = menu.getCurrentParam()
         # Seek events
         if key == Key.esc: sys.exit()
-        elif key == Key.enter: self.mainMenu.getActiveMenu().enterSubmenu()
-        elif key == Key.backspace: self.mainMenu.getActiveMenu().exitSubmenu()
-        elif key == Key.up: self.mainMenu.getActiveMenu().decrease()
-        elif key == Key.down: self.mainMenu.getActiveMenu().increase()
-        elif key == Key.left: pass # TODO add decrease param value
-        elif key == Key.right: pass # TODO add increase param value
+        elif key == Key.enter:
+            menu.enterSubmenu()
+        elif key == Key.backspace:
+            menu.exitSubmenu()
+        elif key == Key.up:
+            menu.decrease()
+        elif key == Key.down:
+            menu.increase()
+        elif key == Key.left:
+            if param: param.decrease()
+        elif key == Key.right:
+            if param: param.increase()
         # Publish menu path message
         self.publishMessage()
         # Show pressed key

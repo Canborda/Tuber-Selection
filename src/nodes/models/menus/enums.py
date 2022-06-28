@@ -20,17 +20,18 @@ class CalibrationMenu(Enum):
     Blur = auto()
     Hue = auto()
     Region = auto()
-    Bounding_box_margin = auto()
     Save_params = auto()
 
 
 class ClassificationMenu(Enum):
     Set_network = auto()
+    Image_size = auto()
+    Bounding_box_margin = auto()
     Show_network_summary = auto()
 
 
 class SettingsMenu(Enum):
-    Image_size = auto()
+    OPTION_1 = auto()
     OPTION_2 = auto()
     OPTION_3 = auto()
 
@@ -49,8 +50,9 @@ class RegionMenu(Enum):
     Size = auto()
 
 
-class SetNetworkMenu(Enum):
-    Binary = auto()
-    Multiclass = auto()
+class NetworkType(Enum):
+    Binary_CNN = auto()
+    Multiclass_CNN = auto()
+    Autoencoder = auto()
 
 # endregion

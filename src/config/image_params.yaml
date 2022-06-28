@@ -1,0 +1,13 @@
+calibration:
+  flip: true
+  blur: 22
+  hue:
+    min: 153
+    max: 22
+  region:
+    center: 0.5
+    size: 0.3
+classification:
+  network: 1
+  img_size: 250
+  bb_margin: 25

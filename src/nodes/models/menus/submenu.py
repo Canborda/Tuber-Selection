@@ -1,6 +1,7 @@
 from enum import Enum
 
 from models.menus.base import BaseMenu
+from models.menus.params import BaseParam
 
 
 class Submenu(BaseMenu):
@@ -24,12 +25,15 @@ class Submenu(BaseMenu):
         except KeyError:
             self.addError(f"Option '{self.optionStr(option)}' not a submenu!")
 
-    def attachParam(self, option: Enum, param: str):
-        self.__params[option.value] = param
+    def attachParam(self, param: BaseParam):
+        self.__params[param.option.value] = param
         return self
 
-    def getParam(self, option: Enum):
-        return self.__params[option.value]
+    def getParam(self, option: Enum) -> BaseParam:
+        try:
+            return self.__params[option.value]
+        except KeyError:
+            pass
 
     # endregion
 
@@ -57,6 +61,12 @@ class Submenu(BaseMenu):
             return self
         else:
             return self.__subumenus[self.getCurrent().value].getActiveMenu()
+    
+    def getCurrentParam(self) -> BaseParam:
+        try:
+            return self.__params[self.getCurrent().value]
+        except KeyError:
+            pass
 
     # endregion
 
