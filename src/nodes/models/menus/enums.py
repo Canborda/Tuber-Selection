@@ -20,6 +20,7 @@ class CalibrationMenu(Enum):
     Blur = auto()
     Hue = auto()
     Region = auto()
+    Min_pixels_contour = auto()
     Save_params = auto()
 
 

@@ -20,10 +20,10 @@ class Calibration:
         self.option = CalibrationMenu(1).name
         # OpenCV attributes
         self.bridge = CvBridge()
-        self.hue_palette = cv.resize(cv.imread(os.path.join(os.path.dirname(__file__), '../../assets/hue_palette.png'), cv.IMREAD_COLOR),(300,300))
+        self.hue_palette = cv.imread(os.path.join(os.path.dirname(__file__), '../../assets/hue_palette.png'), cv.IMREAD_COLOR)
         # ROS attributes
         self.menu_sub = rospy.Subscriber('/menu_topic', Int8MultiArray, self.menuCallback)
-        self.camera_sub = rospy.Subscriber('/cv_camera/image_raw', Image, self.cameraCallback)
+        self.camera_sub = rospy.Subscriber('/preprocess/contours', Image, self.cameraCallback)
         self.visualizer_pub = rospy.Publisher('/visualizer_topic', Image, queue_size=0)
 
     # region Callback methods
@@ -38,14 +38,15 @@ class Calibration:
             # Convert image message
             frame = self.bridge.imgmsg_to_cv2(img_msg, 'bgr8')
             # Add calibration title
-            text = ' CALIBRATING...'
-            textsize = cv.getTextSize(text, cv.FONT_HERSHEY_COMPLEX, 2, 4)[0]
-            cv.putText(frame, text, (10,textsize[1]+10), cv.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 6)
+            text = 'CALIBRATING'
+            textsize = cv.getTextSize(text, cv.FONT_HERSHEY_COMPLEX, frame.shape[0]/480, 4)[0]
+            cv.putText(frame, text, ((frame.shape[1]-textsize[0])//2,textsize[1]+10), cv.FONT_HERSHEY_SIMPLEX, frame.shape[0]/480, (0, 0, 255), 4)
+            # TODO set text scale dinamically
             # Add calibration visualization
             if self.option == CalibrationMenu.Flip: frame = self.calibrateFlip(frame)
-            if self.option == CalibrationMenu.Blur: frame = self.calibrateBlur(frame)
-            if self.option == CalibrationMenu.Hue: frame = self.calibrateHue(frame)
-            if self.option == CalibrationMenu.Region: frame = self.calibrateRegion(frame)
+            elif self.option == CalibrationMenu.Blur: frame = self.calibrateBlur(frame)
+            elif self.option == CalibrationMenu.Hue: frame = self.calibrateHue(frame)
+            elif self.option == CalibrationMenu.Region: frame = self.calibrateRegion(frame)
             # Send image to visualizer node
             img_msg = self.bridge.cv2_to_imgmsg(frame, 'bgr8')
             self.visualizer_pub.publish(img_msg)
@@ -73,17 +74,18 @@ class Calibration:
         return frame
 
     def calibrateHue(self, frame):
-        h, w, c = self.hue_palette.shape
         M = 10
-        RADIUS = h//2
         # Get loaded params
         hue_min = rospy.get_param('/img/calibration/hue/min')
         hue_max = rospy.get_param('/img/calibration/hue/max')
         # Draw palette image
+        palette = cv.resize(self.hue_palette, (frame.shape[0]//3, frame.shape[0]//3))
+        h, w, c = palette.shape
         img = np.zeros(frame.shape, dtype=np.uint8) * 255
-        img[-h-M:-M,M:w+M,:] = self.hue_palette
+        img[-h-M:-M,M:w+M,:] = palette
         frame = cv.addWeighted(img, 1.0, frame, 1.0, 0.0)
         # Draw palette lines
+        RADIUS = h//2
         CENTER = (w//2+M, img.shape[0]-h//2-M)
         ang_min = -hue_min * 2
         ang_max = -hue_max * 2

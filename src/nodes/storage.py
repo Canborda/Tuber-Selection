@@ -55,7 +55,7 @@ class Storage:
         print(new_params)
         # Write file
         file = open(os.path.join(os.path.dirname(__file__), '../config/image_params.yaml'), 'w')
-        self.yaml.dump(new_params, file)
+        yaml.dump(new_params, file)
         # Log
         rospy.logwarn('Stored new params in /config/image_params.yaml')
         rospy.logwarn(new_params)
